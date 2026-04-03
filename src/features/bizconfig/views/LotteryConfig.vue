@@ -322,6 +322,19 @@
           </div>
 
           <div class="preview-section">
+            <h4>玩法口径提示</h4>
+            <div class="preview-grid">
+              <div class="preview-item"><span>49 和局处理</span><strong>{{ autoDrawPreview.ruleHints.special49Mode }}</strong></div>
+              <div class="preview-item"><span>六肖</span><strong>{{ autoDrawPreview.ruleHints.liuXiaoRule }}</strong></div>
+              <div class="preview-item"><span>过关</span><strong>{{ autoDrawPreview.ruleHints.guoGuanRule }}</strong></div>
+              <div class="preview-item"><span>连码</span><strong>{{ autoDrawPreview.ruleHints.lianMaRule }}</strong></div>
+              <div class="preview-item"><span>不中</span><strong>{{ autoDrawPreview.ruleHints.buZhongRule }}</strong></div>
+              <div class="preview-item"><span>多选中一</span><strong>{{ autoDrawPreview.ruleHints.duoXuanRule }}</strong></div>
+              <div class="preview-item"><span>特平中</span><strong>{{ autoDrawPreview.ruleHints.tePingRule }}</strong></div>
+            </div>
+          </div>
+
+          <div class="preview-section">
             <h4>入库标签预览</h4>
             <div class="storage-list">
               <div class="storage-item">
@@ -414,6 +427,15 @@ type AutoDrawPreview = {
     zodiacLabels: string;
     wuxingLabels: string;
     drawLabels: string;
+  };
+  ruleHints: {
+    special49Mode: string;
+    liuXiaoRule: string;
+    guoGuanRule: string;
+    lianMaRule: string;
+    buZhongRule: string;
+    duoXuanRule: string;
+    tePingRule: string;
   };
 };
 
@@ -581,6 +603,7 @@ const autoDrawPreview = computed<AutoDrawPreview | null>(() => {
 
   const storage = buildStoragePreview(rows);
   const special = rows[6];
+  const specialIs49 = special.number === 49;
 
   return {
     special: {
@@ -618,7 +641,16 @@ const autoDrawPreview = computed<AutoDrawPreview | null>(() => {
         .filter(Boolean)
         .join(' / ')
     })),
-    storage
+    storage,
+    ruleHints: {
+      special49Mode: specialIs49 ? '特码两面/合数单双/尾数大小/半波为和局，波色为绿波' : '按常规 1-48 规则结算',
+      liuXiaoRule: specialIs49 ? '49 开出时，六肖（中/不中）为和局' : `按特码生肖【${special.zodiac}】判定`,
+      guoGuanRule: '任一号码为 49 时，该号码在大小单双项赔率按 1 计，波色按绿波',
+      lianMaRule: '三中二/三全中/二全中按正码集合判定；二中特/特串同时使用正码+特码',
+      buZhongRule: '支持五不中至十不中，7 个开奖号码均不能命中下注组合',
+      duoXuanRule: '支持五中一至十中一，组合内仅命中 1 个号码才中奖',
+      tePingRule: '支持一粒任中至五粒任中，组合命中任意 1 个号码即中奖'
+    }
   };
 });
 
